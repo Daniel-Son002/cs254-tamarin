@@ -1,0 +1,35 @@
+/*
+
+The goal of this exercise is to formalize the insecure version of the Needham-Schroeder protocol and prove that it is insecure.
+	1. A -> B: {(A, N_A)}pk(B)
+	2. B -> A: {(N_A, N_B)}pk(A)
+	3. A -> B: {N_B}pk(B)
+Here, pk(A) and pk(B) are public keys with corresponding secret keys, (., .) represents concatenation, and N_A and N_B are random nonces.
+
+*/
+
+theory NSInsecure
+begin
+
+/*
+
+This builtin gives us access to 3 function symbols -- aenc, adec, and pk -- satisfying the following equality:
+	adec(aenc(m, pk(sk)), sk) = m
+Note the distinction between the public key and the secret key, unlike symmetric encryption.
+
+*/
+builtins: asymmetric-encryption
+
+// The following rules define the public key infrastructure
+
+// Register new key
+rule RegLtk:
+	[ Fr(~ltkA) ] // Generate fresh key
+	-->
+	[ !Ltk($A, ~ltkA), !Pk($A, pk(~ltkA)), Out(pk(~ltkA)) ] // Save secret and public key, announce public key
+
+// Reveal key
+rule RevLtk:
+	[ !Ltk($A, ltkA) ]
+	--[ RevLtk(A) ]->
+	[ Out(ltkA) ]
