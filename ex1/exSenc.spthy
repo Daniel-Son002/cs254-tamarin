@@ -1,13 +1,15 @@
 /*
-
 The goal of this exercise is to familiarize you with adversaries in Tamarin. It is recommended that you regularly try to reload the model to check syntax.
-
 */
 
 theory ExerciseSymmetricEncryption
 begin
 
 builtins: symmetric-encryption
+
+/*
+Importing symmetric encryption message theory defines the functions senc/2 and sdec/2 with the equation sdec(senc(m, k), k) = m
+*/
 
 rule KeyGen:
   [ Fr(~k) ]
