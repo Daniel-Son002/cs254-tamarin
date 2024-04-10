@@ -10,8 +10,11 @@ builtins: symmetric-encryption
 /*
 Importing symmetric encryption message theory defines the functions senc/2 and sdec/2 with the equation sdec(senc(m, k), k) = m
 
-[ Fr(~k) ] generates a unguessable/fresh value k (in premise)
-[ !LongTermKey($A, ~k) ] is a function application with general form f(t1, t2) where $A is a public value and ~k is the unguessable value.
+rule KeyGEn lets a participant A generate a fresh secret key and store it using the fact !LongTermKey.
+
+Premise: [ Fr(~k) ] generates a unguessable/fresh value k
+
+Conclusion: [ !LongTermKey($A, ~k) ] is a function application with general form f(t1, t2) where $A is a public value and ~k is the unguessable value. Note that facts that do not start with '!' Can only be used once.
 */
 
 rule KeyGen:
@@ -19,8 +22,10 @@ rule KeyGen:
   -->
   [ !LongTermKey($A, ~k) ]
 
+
+
 /*
-In the rule SendMsg, we want to output a message from A.
+In the rule SendMsg, we want to participant $A to send a message ~m symmetrically encrypted under the key generated using KeyGen.
 
 To do this the premise should include the long term key that we previously generated using KeyGen [ !LongTermKey($A, ~k) ].
 
