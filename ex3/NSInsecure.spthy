@@ -30,6 +30,34 @@ rule RegLtk:
 
 // Reveal key
 rule RevLtk:
-	[ !Ltk($A, ltkA) ]
+	[ !Ltk($A, ltkA) ] // Look up secret key
 	--[ RevLtk(A) ]->
-	[ Out(ltkA) ]
+	[ Out(ltkA) ] // Announce secret key
+
+// Send first message
+rule A1:
+	let m1 = aenc {$A, ~nA} pkB // Encode (A, N_A) with B's public key
+	in
+	[ Fr(~nA), !Pk($B, pkB) ] // Generate fresh nonce
+	-->
+	[ Out(m1) ]
+
+// Send second message
+rule B1:
+	let m1 = aenc {$A, nA} pk(ltkB)
+		m2 = aenc {nA, ~nB} pkA
+	in
+	[ !Ltk($B, ltkB), In(m1), Fr(~nB), !Pk($A, pkA) ]
+	-->
+	[ Out(m2) ]
+
+// Send third message
+rule A2:
+	let m2 = aenc {$B, nB} pk(ltkA)
+		m3 = aenc {nB} pkB
+	in
+	[ !Ltk($A, ltkA), In(m2), !Pk($B, pkB) ]
+	-->
+	[ Out(m3) ]
+
+end
