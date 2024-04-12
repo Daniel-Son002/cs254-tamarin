@@ -10,7 +10,7 @@ builtins: symmetric-encryption
 /*
 Importing symmetric encryption message theory defines the functions senc/2 and sdec/2 with the equation sdec(senc(m, k), k) = m
 
-rule KeyGEn lets a participant A generate a fresh secret key and store it using the fact !LongTermKey.
+rule KeyGen lets a participant A generate a fresh secret key and store it using the fact !LongTermKey.
 
 Premise: [ Fr(~k) ] generates a unguessable/fresh value k
 
