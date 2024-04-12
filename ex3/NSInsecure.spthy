@@ -20,34 +20,52 @@ Note the distinction between the public key and the secret key, unlike symmetric
 */
 builtins: asymmetric-encryption
 
+
 // The following rules define the public key infrastructure
 
-// Register new key
+// Rule to register new key
 rule RegLtk:
 	[ Fr(~ltkA) ] // Generate fresh key
 	-->
 	[ !Ltk($A, ~ltkA), !Pk($A, pk(~ltkA)), Out(pk(~ltkA)) ] // Save secret and public key, announce public key
 
-// Reveal key
+// This allows an adversary to retrieve a public key
+rule GetPk:
+	[ !Pk($A, pkA) ]
+	-->
+	[ Out(pkA) ]
+
+// This allows us to model a secret key being revealed, but ensured that this is logged by an action
 rule RevLtk:
 	[ !Ltk($A, ltkA) ] // Look up secret key
-	--[ RevLtk(A) ]->
+	--[ LtkReveal(A) ]->
 	[ Out(ltkA) ] // Announce secret key
+
+
+// We now define our protocol
 
 // Send first message
 rule A1:
 	let m1 = aenc {$A, ~nA} pkB // Encode (A, N_A) with B's public key
 	in
-	[ Fr(~nA), !Pk($B, pkB) ] // Generate fresh nonce
+	[ Fr(~nA) // Generate fresh nonce
+	, !Pk($B, pkB) // Look up B's public key
+	] 
 	-->
-	[ Out(m1) ]
+	[ A1($B, ~nA) // Store recipient and nonce
+	, Out(m1) // Output message
+	]
 
 // Send second message
 rule B1:
-	let m1 = aenc {$A, nA} pk(ltkB)
-		m2 = aenc {nA, ~nB} pkA
+	let m1 = aenc {$A, nA} pk(ltkB) // Define message that B recieves
+		m2 = aenc {nA, ~nB} pkA // Encode (N_A, N_B) with A's public key
 	in
-	[ !Ltk($B, ltkB), In(m1), Fr(~nB), !Pk($A, pkA) ]
+	[ !Ltk($B, ltkB)
+	, In(m1)
+	, Fr(~nB)
+	, !Pk($A, pkA) 
+	]
 	-->
 	[ Out(m2) ]
 
