@@ -38,7 +38,7 @@ rule GetPk:
 // This allows us to model a secret key being revealed, but ensured that this is logged by an action
 rule RevLtk:
 	[ !Ltk($A, ltkA) ] // Look up secret key
-	--[ LtkReveal(A) ]->
+	--[ LtkReveal($A) ]->
 	[ Out(ltkA) ] // Announce secret key
 
 
@@ -49,33 +49,55 @@ rule A1:
 	let m1 = aenc {$A, ~nA} pkB // Encode (A, N_A) with B's public key
 	in
 	[ Fr(~nA) // Generate fresh nonce
-	, !Pk($B, pkB) // Look up B's public key
+	, !Pk($B, pkB) // Look up public key
 	] 
 	-->
-	[ A1($B, ~nA) // Store recipient and nonce
+	[ A1($A, $B, ~nA) // Store sender, reciever and nonce
 	, Out(m1) // Output message
 	]
 
-// Send second message
+// Recieve first message, send second message
 rule B1:
 	let m1 = aenc {$A, nA} pk(ltkB) // Define message that B recieves
 		m2 = aenc {nA, ~nB} pkA // Encode (N_A, N_B) with A's public key
 	in
-	[ !Ltk($B, ltkB)
-	, In(m1)
-	, Fr(~nB)
-	, !Pk($A, pkA) 
+	[ !Ltk($B, ltkB) // Look up secret key
+	, In(m1) // Read message
+	, Fr(~nB) // Generate fresh nonce
+	, !Pk($A, pkA) // Look up public key
 	]
 	-->
-	[ Out(m2) ]
+	[ B1($B, $A, nA, ~nB) // Store sender, reciever and both nonces
+	, Out(m2) // Output message
+	]
 
-// Send third message
+// Recieve second message, send third message
 rule A2:
-	let m2 = aenc {$B, nB} pk(ltkA)
-		m3 = aenc {nB} pkB
+	let m2 = aenc {B, nB} pk(ltkA) // Define message that A recieves
+		m3 = aenc {nB} pkB // Encode N_B with B's public key
 	in
-	[ !Ltk($A, ltkA), In(m2), !Pk($B, pkB) ]
+	[ A1(A, B, nA) // Look up sender, reciever and nonce
+	, !Ltk(A, ltkA) // Look up secret key
+	, In(m2) // Read message
+	, !Pk(B, pkB) // Look up public key
+	]
 	-->
-	[ Out(m3) ]
+	[ Out(m3) // Output message
+	, Nonce(A, B, nA) // Confirmation of N_A for A
+	, Nonce(A, B, nB) // Confirmation of N_B for A
+	]
+
+// Recieve third message
+rule B2:
+	let m3 = aenc{nB} pk(ltkB) // Define message that B recieves
+	in
+	[ B1(B, A, nA, nB) // Look up sender, reciever and both nonces
+	, !Ltk(B, ltkB) // Look up secret key
+	, In(m3) // Read message
+	]
+	-->
+	[ Nonce(B, A, nA) // Confirmation of N_A for B
+	, Nonce(B, A, nB) // Confirmation of N_B for B
+	]
 
 end
