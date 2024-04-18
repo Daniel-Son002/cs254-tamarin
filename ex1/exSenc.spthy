@@ -44,3 +44,8 @@ lemma Secrecy:
   "All p m #t. MessageWasSentBy(p, m) @ #t ==> not Ex #x. K(m) @ #x"
 
 end
+
+/*
+At this point, try verifying the Tamarin rules by running them! To launch Tamarin, execute this command:
+tamarin-prover interactive ex1/
+*/
