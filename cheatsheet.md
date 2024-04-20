@@ -24,7 +24,7 @@ There are some facts that are reserved that you will often see in Tamarin syntax
 
 ## Diffie-Hellman:
 ```tamarin
-(x^y)^z = x ^ (y*z)
+(x^y)^z = x^(y*z)
 x^1 = 1
 x*y = y*x
 (x*y)*z = x*(y*z)
