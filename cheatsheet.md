@@ -8,7 +8,7 @@ rule Register_pk:
 ```
 
 The rule can be read as follows:
-First, generate a fresh name ~ltk (of sort fresh), which is the new private key, and non-deterministically choose a public name A, for the agent for whom we are generating the key-pair. Afterward, generate the fact !Ltk($A, ~ltk) (the exclamation mark ! denotes that the fact is persistent, i.e., it can be consumed arbitrarily often), which denotes the association between agent A and its private key ~ltk, and generate the fact !Pk($A, pk(~ltk)), which associates agent A and its public key pk(~ltk).
+First, generate a fresh name `~ltk` (of sort fresh), which is the new private key, and non-deterministically choose a public name `A`, for the agent for whom we are generating the key-pair. Afterward, generate the fact `!Ltk($A, ~ltk)` (the exclamation mark `!` denotes that the fact is persistent, i.e., it can be consumed arbitrarily often), which denotes the association between agent `A` and its private key `~ltk`, and generate the fact `!Pk($A, pk(~ltk))`, which associates agent `A` and its public key `pk(~ltk)`.
 
 ## Variables
 - `~x` denotes `x:fresh` (fresh variable)
