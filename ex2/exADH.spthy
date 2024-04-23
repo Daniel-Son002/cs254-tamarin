@@ -3,32 +3,41 @@ begin
 
 builtins: symmetric-encryption, diffie-hellman
 
+/*
+rule Ltk models a participant generating a fresh public-private key pair
+*/
+
 rule Ltk:
-  // let publicComponent = _^_ in
+  // let publicComponent = _^_ in 	// Generate a public value
   []
   -->
-  []
+  [] 	// Output the long term key, public key and public component
+
+
+/*
+A will use its public value to send a request to B with its public key
+*/
 
 rule A_Init:
-  []
+  []	// A should initialize its public key
   --[ ReachAInit() ]->
   [ // Out(...)
   // , St_A(...)
-  ]
+  ]	// A sends a request to B with its public value/key and stores A and B's public value
 
 rule B_Init:
-  // let sharedKey = _^_ in
-  [ // In(...)
-  ]
+  // let sharedKey = _^_ in 	// B calculates the shared key using A's public key
+  [ // In(...)	// B initializes its long term key and A's public value and key
+  ]	
   --[ ReachBInit()
     // , ResponderKey(_)
     ]->
   [ // Out(...)
-  ]
+  ]	// B outputs its symmetrically encrypted acknowledgement to A with its public value/key
 
 rule A_SendMsg:
-  // let sharedKey = _^_ in
-  [ // In(...)
+  // let sharedKey = _^_ in	// A calculates the shared key using B's public key
+  [ // In(...)	// A takes in the encrypted acknowledgment and generates a fresh message
   // , St_A(...)
   ]
   --[ ReachASendMsg()
@@ -36,7 +45,7 @@ rule A_SendMsg:
     // , InitiatorKey(_)
     ]->
   [ // Out(...)
-  ]
+  ]	// A outputs the symmetrically encrypted message with the shared key between A and B
 
 // This restriction allows you to use the Eq action fact in rules to constrain
 // that two terms must be equal. This is used to "compare" two messages or
