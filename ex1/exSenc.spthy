@@ -18,9 +18,9 @@ Conclusion: [ !LongTermKey($A, ~k) ] is a function application with general form
 */
 
 rule KeyGen:
-  [ Fr(~k) ]
+  [ ]
   -->
-  [ !LongTermKey($A, ~k) ]
+  [ ]
 
 
 
