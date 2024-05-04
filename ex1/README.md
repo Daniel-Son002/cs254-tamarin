@@ -2,6 +2,8 @@
 
 The goal of example 1 is to get you familiar with Tamarin syntax and how to perform specific actions. Open `exSenc.spthy` and follow the instructions inside.
 
+To launch Tamarin and verify the lemmas, run `tamarin-prover interactive ex1/`
+
 
 ## Tamarin Syntax
 
@@ -33,5 +35,10 @@ In the premise, we want to generate a unguessable/fresh value `k`. How might we 
 
 
 ### Conclusion
+In the conclustion, we want to save the unguessable/fresh value `k` that we generated in the premise and denote that it is participant `A`'s key. Again, check the cheatsheet for any relevant predefined rules that may be useful!
+<details>
+  <summary>Expected conclusion</summary>
+  [ !LongTermKey($A, ~k) ]
+</details>
 
 
