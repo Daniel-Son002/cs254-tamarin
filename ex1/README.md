@@ -23,7 +23,7 @@ rule RuleName:
 
 ## KeyGen
 
-KeyGen allows a participant `A` to generate a fresh secret key and store it using the fact `!LongTermKey`.
+`KeyGen` allows a participant `A` to generate a fresh secret key and store it using the fact `!LongTermKey`.
 
 ### Premise
 
@@ -40,5 +40,27 @@ In the conclustion, we want to save the unguessable/fresh value `k` that we gene
   <summary>Expected conclusion</summary>
   [ !LongTermKey($A, ~k) ]
 </details>
+
+## SendMsg
+
+`SendMsg` allows a participant `A` to send a message `~msg`, symmetrically encrypted under the key generated using KeyGen. 
+
+### Premise
+In the premise, we want to use the previously generated key from `KeyGen`.
+<details>
+  <summary>Expected premise</summary>
+  [ !LongTermKey($A, ~k) ]
+</details>
+
+### Action Fact
+This part is already given in the stub code. The action fact shows that participant `A` sends the message `~msg`.
+
+### Conclustion
+In the conclusion, we want to output the key `~k`. 
+<details>
+  <summary>Expected conclustion</summary>
+  [ Out(~k) ]
+</details>
+
 
 
