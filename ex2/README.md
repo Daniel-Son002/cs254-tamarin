@@ -33,7 +33,7 @@ The conclustion for this rule should output a symmetrically encrypted acknowledg
 
 ## A_SendMsg
 
-Th goal of this is for participant `A` to verify `B`'s key and send back the symmetrically encrypted message `msg`.
+The goal of this is for participant `A` to verify `B`'s key and send back the symmetrically encrypted message `msg`.
 
 The premise for this rule should take in participant `A`'s long term key, participant `B`'s public key, the encrypted acknowledgement, and the stored values from `A_Init`.
 
