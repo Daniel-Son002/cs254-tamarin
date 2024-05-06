@@ -63,4 +63,15 @@ In the conclusion, we want to output the key `~k`.
 </details>
 
 
+## Lemma Explanation
+
+At the end of Tamarin protocols we need a lemmas to specify properties about a protocol to be verified. Lemma names are prefixed by the keyword `lemma`.
+
+```tamarin
+lemma Secrecy:
+  "All p m #t. MessageWasSentBy(p, m) @ #t ==> not Ex #x. K(m) @ #x"
+```
+
+The above is the Secrecy lemma that is defined for you in this exercise. `lemma Secrecy` check that for all participants `p`, participant `p` sends a message `m` at time `#t` defined by `All p m #t. MessageWasSentBy(p, m) @ #t`. The `==>` is a logical operand that is equivalent to `p | not q` where the left hand side of the `==>` is `p` and the right hand side is `q`. Thus the right hand side is showing that for some time points `#x`, `K(m)` does not hold.
+
 
