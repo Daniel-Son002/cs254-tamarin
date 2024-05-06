@@ -1,6 +1,6 @@
 # Example 1
 
-The goal of example 1 is to get you familiar with Tamarin syntax and how to perform specific actions. Open `exSenc.spthy` and follow the instructions inside.
+The goal of example 1 is to get you familiar with Tamarin syntax and how to perform specific actions. In this exercise, we will model a participant communicating by generating a secret key and sending a symmetrically encrypted message. Open `exSenc.spthy` and follow the instructions inside.
 
 To launch Tamarin and verify the lemmas, run `tamarin-prover interactive ex1/`
 
