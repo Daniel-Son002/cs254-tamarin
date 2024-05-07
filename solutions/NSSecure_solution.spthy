@@ -1,0 +1,173 @@
+/*
+The goal of this exercise is to formalize the secure version of the Needham-Schroeder protocol and prove that it is secure.
+    1. A -> B: {(A, N_A)}pk(B)
+    2. B -> A: {(B, N_A, N_B)}pk(A)
+    3. A -> B: {N_B}pk(B)
+Here, pk(A) and pk(B) are public keys with corresponding secret keys, (., .) represents concatenation, and N_A and N_B are random nonces.
+Note the difference from the insecure version is in step 2, where B also sends their identity.
+*/
+
+theory NSSecure
+begin
+
+/*
+This builtin gives us access to 3 function symbols -- aenc, adec, and pk -- satisfying the following equality:
+    adec(aenc(m, pk(sk)), sk) = m
+Note the distinction between the public key and the secret key, unlike symmetric encryption.
+*/
+builtins: asymmetric-encryption
+
+
+// The following rules define the public key infrastructure
+
+// This allows any user to register a public key
+rule RegLtk:
+    [ Fr(~ltkA) ] // Generate fresh key
+    -->
+    [ !Ltk($A, ~ltkA), !Pk($A, pk(~ltkA)), Out(pk(~ltkA)) ] // Save secret and public key, announce public key
+
+// This allows any user to retrieve a public key
+rule GetPk:
+    [ !Pk($A, pkA) ]
+    -->
+    [ Out(pkA) ]
+
+// This allows us to model a secret key being revealed, but ensured that this is logged by an action
+rule RevLtk:
+    [ !Ltk(A, ltkA) ] // Look up secret key
+    --[ LtkReveal(A) ]->
+    [ Out(ltkA) ] // Announce secret key
+
+
+// We now define our protocol
+
+// Send first message
+rule A1:
+    let m1 = aenc {'1', $A, ~nA} pkB // Encode (A, N_A) with B's public key
+    in
+    [ Fr(~nA) // Generate fresh nonce
+    , !Pk($B, pkB) // Look up public key
+    ] 
+  --[ OUT_A1(m1) // Ignore this action fact, it is used to optimize the proof search
+    ]->
+    [ A1($A, $B, ~nA) // Store sender, reciever and nonce
+    , Out(m1) // Output message
+    ]
+
+// Recieve first message, send second message
+rule B1:
+    let m1 = aenc {'1', A, nA} pk(ltkB) // Define message that B recieves
+        m2 = aenc {'2', $B, nA, ~nB} pkA // Encode (N_A, N_B) with A's public key
+    in
+    [ !Ltk($B, ltkB) // Look up secret key
+    , In(m1) // Read message
+    , Fr(~nB) // Generate fresh nonce
+    , !Pk(A, pkA) // Look up public key
+    ]
+  --[ IN_B1(nA, m1) // Ignore these action facts, they are used to optimize the proof search
+    , OUT_B1(m2)
+    , Running(A, $B, <'init', nA, ~nB>)
+    ]->
+    [ B1($B, A, nA, ~nB) // Store sender, reciever and both nonces
+    , Out(m2) // Output message
+    ]
+
+// Recieve second message, send third message
+rule A2:
+    let m2 = aenc {'2', B, nA, nB} pk(ltkA) // Define message that A recieves
+        m3 = aenc {'3', nB} pkB // Encode N_B with B's public key
+    in
+    [ A1(A, B, nA) // Look up sender, reciever and nonce
+    , !Ltk(A, ltkA) // Look up secret key
+    , In(m2) // Read message
+    , !Pk(B, pkB) // Look up public key
+    ]
+  --[ IN_A2(nB, m2)
+    , Commit(A, B, <'init', nA, nB>)
+    , Running(B, A, <'resp', nA, nB>)
+    , Secret(A, B, nA) // Confirmation of N_A for A
+    , Secret(A, B, nB) // Confirmation of N_B for A
+    ]->
+    [ Out(m3) // Output message
+    ]
+
+// Recieve third message
+rule B2:
+    let m3 = aenc{'3', nB} pk(ltkB) // Define message that B recieves
+    in
+    [ B1(B, A, nA, nB) // Look up sender, reciever and both nonces
+    , !Ltk(B, ltkB) // Look up secret key
+    , In(m3) // Read message
+    ]
+  --[ Commit(B, A, <'resp', nA, nB>)
+    , Secret(B, A, nA) // Confirmation of N_A for B
+    , Secret(B, A, nB) // Confirmation of N_B for B
+    ]->
+    []
+
+/*
+This lemma constructs an invariant that helps the prover converge faster.
+Feel free to treat this as a black box, but if you're feeling brave, try commenting it out and see what goes wrong in the proof of the 'nonce_secracy' lemma
+*/
+lemma types [sources]:
+  " (All ni m1 #i.
+        IN_B1(ni, m1) @ i
+        ==>
+        ( (Ex #j. KU(ni) @ j & j < i)
+        | (Ex #j. OUT_A1(m1) @ j)
+        )
+    )
+  & (All nr m2 #i.
+        IN_A2(nr, m2) @ i
+        ==>
+        ( (Ex #j. KU(nr) @ j & j < i)
+        | (Ex #j. OUT_B1(m2) @ j)
+        )
+    )
+  "
+
+// Nonce secrecy from the perspective of both the initiator and the responder.
+lemma nonce_secrecy:
+  " /* It cannot be that */
+    not(
+        Ex A B s #i.
+          /* somebody claims to have setup a shared secret, */
+          Secret(A, B, s) @ i
+          /* but the adversary knows it */
+        & (Ex #j. K(s) @ j)
+          /* without having performed a long-term key reveal. */
+        & not (Ex #r. LtkReveal(A) @ r)
+        & not (Ex #r. LtkReveal(B) @ r)
+       )"
+
+// Injective agreement from the perspective of both the initiator and the responder.
+lemma injective_agree:
+  " /* Whenever somebody commits to running a session, then */
+    All actor peer params #i.
+        Commit(actor, peer, params) @ i
+      ==>
+        /* there is somebody running a session with the same parameters */
+          (Ex #j. Running(actor, peer, params) @ j & j < i
+            /* and there is no other commit on the same parameters */
+            & not(Ex actor2 peer2 #i2.
+                    Commit(actor2, peer2, params) @ i2 & not(#i = #i2)
+                 )
+          )
+        /* or the adversary perform a long-term key reveal on actor or peer */
+        | (Ex #r. LtkReveal(actor) @ r)
+        | (Ex #r. LtkReveal(peer)  @ r)
+  "
+
+// Consistency check: ensure that secrets can be shared between honest agents.
+lemma session_key_setup_possible:
+  exists-trace
+  " /* It is possible that */
+    Ex A B s #i.
+      /* somebody claims to have setup a shared secret, */
+      Secret(A, B, s) @ i
+      /* without the adversary having performed a long-term key reveal. */
+    & not (Ex #r. LtkReveal(A) @ r)
+    & not (Ex #r. LtkReveal(B) @ r)
+  "
+
+end
