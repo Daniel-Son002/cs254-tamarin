@@ -66,3 +66,16 @@ The following is an example of a lemma that specifies that the fresh value `~n` 
 lemma distinct_nonce:
   "All n #i #j. F(n)@i & F(n)&j ==> #i=#j"
 ```
+
+The following are keywords/symbols in lemmas:
+- `All` for universal quantifiers
+- `Ex` for existential quantifiers
+- `==>` for implication
+- `&` for conjunction
+- `|` for disjunction
+- `not` for negation
+- `f @ i` for action constraint
+- `i < j` for temporal ordering
+- `#i = #j` for equality between temporal variables `#i` and `#j`
+- `x = y` for equality between message variables `x` and `y`
+- `Pred(t_1, ..., t_n)` for instantiating a predicate for the terms `t_1` to `t_n`
