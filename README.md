@@ -35,7 +35,7 @@ rule Name:
   [ output facts ]
 ```
 
-Note that if the rule does not have any action facts, then the middl brackets can be omitted.
+Note that if the rule does not have any action facts, then the middle brackets can be omitted.
 
 Facts are of the form `F(t_1, ..., t_n)` for a fact `F` and n terms. Some built in facts are:
 - `In`
