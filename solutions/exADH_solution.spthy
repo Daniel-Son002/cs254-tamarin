@@ -30,3 +30,5 @@ rule A_SendMsg:
       InitiatorKey(sharedKey), 
       Eq('ack', sdec(encryptedAck, sharedKey)) ]->
   [ Out(senc(~msg, sharedKey)) ]
+
+end
