@@ -55,3 +55,14 @@ x*y = y*x
 x*1 = x
 x*inv(x) = 1
 ```
+
+
+## Lemma Writing and Syntax
+
+Lemmas are used to specify a property about a protocol to be verified. Equivalent lemmas can often be written in multiple different ways. 
+
+The following is an example of a lemma that specifies that the fresh value `~n` is distinct in all applications in the function `F`:
+```tamarin
+lemma distinct_nonce:
+  "All n #i #j. F(n)@i & F(n)&j ==> #i=#j"
+```
