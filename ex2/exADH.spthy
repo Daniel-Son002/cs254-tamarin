@@ -4,14 +4,14 @@ begin
 builtins: symmetric-encryption, diffie-hellman
 
 /*
-The rule Ltk models a participant generating a fresh public-private key pair.
+rule Ltk models a participant generating a fresh public-private key pair
 */
 
 rule Ltk:
-  // let publicKey = 'g'^_ in 	// Calculate the public key based on the secret key
-  []  // Generate a secret key
+  // let publicComponent = 'g'^secretKey in 	// Generate a public value
+  [ Fr(~secretKey) ]
   -->
-  [] 	// Store the secret key and public key, and output the public key
+  [ // !Ltk(), !Pk($P, publicComponent), Out() ] 	// Output the long term key, public key and public component
 
 
 /*
@@ -19,23 +19,23 @@ A will use its public value to send a request to B with its public key
 */
 
 rule A_Init:
-  []	// A should look up its public key
+  [ // !Pk() ]	// A should initialize its public key
   -->
-  []	// A outputs a request to B with its public key and stores A and B's public value
+  [ // Out(<'req'>), St_A() ]	// A sends a request to B with its public value/key and stores A and B's public value
 
 rule B_Init:
   // let sharedKey = _^_ in 	// B calculates the shared key using A's public key
-  []	// B initializes its long term key and A's public value and key
+  [ !Ltk(), !Pk(), !Pk(), In(<'req'>) ]	// B initializes its long term key and A's public value and key
   --[ ResponderKey(sharedKey) ]->
-  []	// B outputs its symmetrically encrypted acknowledgement to A with its public value/key
+  [ Out(<senc('ack')>) ]	// B outputs its symmetrically encrypted acknowledgement to A with its public value/key
 
 rule A_SendMsg:
   // let sharedKey = _^_ in	// A calculates the shared key using B's public key
-  [] 	// A takes in the encrypted acknowledgment and generates a fresh message
+  [ !Ltk(), !Pk(), Fr(), In(<encryptedAck>), St_A() ] 	// A takes in the encrypted acknowledgment and generates a fresh message
   --[ MessageWasSent(~msg),
       InitiatorKey(sharedKey),
       Eq('ack', sdec(encryptedAck, sharedKey)) ]->
-  []	// A outputs the symmetrically encrypted message with the shared key between A and B
+  [ Out(senc()) ]	// A outputs the symmetrically encrypted message with the shared key between A and B
 
 // This restriction allows you to use the Eq action fact in rules to constrain
 // that two terms must be equal. This is used to "compare" two messages or
