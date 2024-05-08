@@ -25,17 +25,17 @@ rule A_Init:
 
 rule B_Init:
   // let sharedKey = _^_ in 	// B calculates the shared key using A's public key
-  [ !Ltk(), !Pk(), !Pk(), In(<'req'>) ]	// B initializes its long term key and A's public value and key
+  [ // !Ltk(), !Pk(), !Pk(), In(<'req'>) ]	// B initializes its long term key and A's public value and key
   --[ ResponderKey(sharedKey) ]->
-  [ Out(<senc('ack')>) ]	// B outputs its symmetrically encrypted acknowledgement to A with its public value/key
+  [ // Out(<senc('ack')>) ]	// B outputs its symmetrically encrypted acknowledgement to A with its public value/key
 
 rule A_SendMsg:
   // let sharedKey = _^_ in	// A calculates the shared key using B's public key
-  [ !Ltk(), !Pk(), Fr(), In(<encryptedAck>), St_A() ] 	// A takes in the encrypted acknowledgment and generates a fresh message
+  [ // !Ltk(), !Pk(), Fr(), In(<encryptedAck>), St_A() ] 	// A takes in the encrypted acknowledgment and generates a fresh message
   --[ MessageWasSent(~msg),
       InitiatorKey(sharedKey),
       Eq('ack', sdec(encryptedAck, sharedKey)) ]->
-  [ Out(senc()) ]	// A outputs the symmetrically encrypted message with the shared key between A and B
+  [ // Out(senc()) ]	// A outputs the symmetrically encrypted message with the shared key between A and B
 
 // This restriction allows you to use the Eq action fact in rules to constrain
 // that two terms must be equal. This is used to "compare" two messages or
