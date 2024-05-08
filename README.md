@@ -33,30 +33,19 @@ by sorry
 
 `sorry` is clickable and will be how you autoprove lemmas using the Tamarin solver! Try completing exercise 1 and verify its lemma.
 
-# Tamarin Introduction
+# Problem Set Overview
 
-Tamarin models use three main ingredients:
+## Exercise 1
+In exercise 1, you will implement symmetrically encrypted messaging where a participant `A` sends a symmetrically encrypted message. This utilizes the *built-in*, `symmetric-encryption`. 
 
-- Rules
-- Facts
-- Terms
+## Exercise 2
+In exercise 2, you will implement the Diffie-Hellman protocol that we discussed in class. More specifically, you will implement the following rules:
+- `Ltk` where we generate a long term key under the Diffie-Hellman protocol
+- `A_Init` where a participant `A` sends a request to participant `B`
+- `B_Init` where a participant `B` acknowledges participant `A`'s request
+- `A_SendMsg` where a participant `A` uses participant `B`'s acknowledgement to send a message
 
-A rule in Tamarin needs a unique name and three parts: premise (left-hand side), transition (action facts), and conclusion (right-hand side). Rules will follow the general form:
+## Exercise 3
+In exercise 3, you will implement the Needham-Schroeder protocol that we discussed in class. This exercise comes in two parts:
 
-```tamarin
-rule Name:
-  [ consumed facts ]
-  --[ action facts ]->
-  [ output facts ]
-```
-
-Note that if the rule does not have any action facts, then the middle brackets can be omitted.
-
-Facts are of the form `F(t_1, ..., t_n)` for a fact `F` and n terms. Some built in facts are:
-- `In`
-- `Out`
-- `Fr`
-
-These facts are <ins>linear</ins> which means they can be produced by rules and also consumed by rules. Linear facts may appear in one state but not the next. Alternatively, <ins>persistent</ins> facts are never removed from the state and are denoted by prefixing the fact with a bang `!`.
-
-More information on Tamarin syntax can be found in the cheat sheet.
+In the first part, you will implement the version that is *not* secure in the man-in-the-middle attack. The next part will be to make the Needham-Schroeder protocol secure under the man-in-the-middle attack. This problem is more open-ended compared to the previous two exercises.
