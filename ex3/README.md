@@ -19,7 +19,7 @@ The begining of the file contains some initial scaffolding, importing the built-
 
 ## Defining the Protocol
 
-Next, fill in the details of rules `A1`, `B1`, `A2` and `B2`. 
+Next, fill in the details of rules `A1`, `B1`, `A2` and `B2`. Each rule has decreasing levels of guidance. Rule `A1` is provided in its entirety as an example. In rule `B1`, fill in every line by following the associated comment. In rule `A2`, only the action terms are provided; fill everything else in! Finally, complete rule `B2` from scratch, including the missing action terms.  
 
 ## Defining the Lemmas
 

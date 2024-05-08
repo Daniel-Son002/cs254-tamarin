@@ -7,7 +7,7 @@ Here, pk(A) and pk(B) are public keys with corresponding secret keys, (., .) rep
 Note the difference from the insecure version is in step 2, where B also sends their identity.
 */
 
-theory NSInsecure
+theory NSSecure
 begin
 
 // Copy over the code from NSInsecure.spthy and make the necessary changes to the rules. All the lemmas should now pass!
