@@ -18,7 +18,7 @@ rule Name:
   [ output facts ]
 ```
 
-Note that if the rule does not have any action facts, then the middle brackets can be omitted.
+Note that if a rule does not have any action facts then the middle brackets can be omitted.
 
 A basic rule will follow the following format:
 
@@ -41,7 +41,7 @@ There are some facts that are reserved that you will often see in Tamarin syntax
 - `In(m)` - Receive `m` (this fact will only appear in the premise)
     - This fact is used to model a party receiving a message from the untrusted network that is controlled by a Dolev-Yao adversary, and can only occur on the left-hand side of a rewrite rule.
 - `Fr(x)` - Generate unguessable/fresh value `x` (this fact will only appear in the premise)
-    -This fact must be used when generating fresh (random) values, and can only occur on the left-hand side of a rewrite rule, where its argument is the fresh term. Tamarin’s underlying execution model has a built-in rule for generating instances of Fr(x) facts, and also ensures that each instance produces a term (instantiating x) that is different from all others.
+    - This fact must be used when generating fresh (random) values, and can only occur on the left-hand side of a rewrite rule, where its argument is the fresh term. Tamarin’s underlying execution model has a built-in rule for generating instances of Fr(x) facts, and also ensures that each instance produces a term (instantiating x) that is different from all others.
 - `pk(x)` - The public key corresponding to the private key `x`.
 
 These facts are <ins>linear</ins> which means they can be produced by rules and also consumed by rules. Linear facts may appear in one state but not the next. Alternatively, <ins>persistent</ins> facts are never removed from the state and are denoted by prefixing the fact with a bang `!`.
@@ -67,7 +67,7 @@ First, generate a fresh name `~ltk` (of sort fresh), which is the new private ke
 
 *Note*: Variable notation is also used in writing lemmas.
 
-# Lemma Writing and Syntax
+# Lemmas
 
 Lemmas are used to specify a property about a protocol to be verified. Equivalent lemmas can often be written in multiple different ways. 
 
@@ -102,13 +102,15 @@ allows us to notate the Dolev-Yao adversary knowledge `K(x)`. This specifies an 
 ```tamarin
 lemma secrecy:
   "All x #i.
-    Secret(x) @ i ==> not (Ex #j. K(x) @ #j)"
+    Secret(x) @ #i ==> not (Ex #j. K(x) @ #j)"
 ```
 
-In this lemma, we have a `Secrect(x)` action fact where information `x` is a secret. Then the lemma states, for all `x` information and time `#i`, `Secret(x) @ i` implies that there does not exist a time `#j` where the adversary knows information `x` at time `#j`.
+In this lemma, we have a `Secrect(x)` action fact where information `x` is a secret. Then the lemma states, for all `x` information and time `#i`, `Secret(x) @ #i` implies that there does not exist a time `#j` where the adversary knows information `x` at time `#j`.
 
 
 # Builtins
+Tamarin has some built-in cryptographic functionality to help model protocols. Their behavior is defined below.
+
 ## Symmetric Encryption
 `sdec(senc(m, k), k) = m`
 
