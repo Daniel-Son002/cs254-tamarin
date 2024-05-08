@@ -44,6 +44,7 @@ rule RevLtk:
 // We now define our protocol
 
 // Send first message
+/*
 rule A1:
     let m1 = aenc {'1', $A, ~nA} pkB // Encode (A, N_A) with B's public key
     in
@@ -55,8 +56,10 @@ rule A1:
     [ A1($A, $B, ~nA) // Store sender, reciever and nonce
     , Out(m1) // Output message
     ]
+*/
 
 // Recieve first message, send second message
+/*
 rule B1:
     // let m1 = ... // Define message that B recieves
     //     m2 = ... // Encode (N_A, N_B) with A's public key
@@ -73,8 +76,10 @@ rule B1:
     [ // ... // Store sender, reciever and both nonces
     , // ... // Output message
     ]
+*/
 
 // Recieve second message, send third message
+/*
 rule A2:
     [ 
     // Remember to use the 'A1' fact here! 
@@ -86,19 +91,23 @@ rule A2:
     , Secret(A, B, nB)
     ]->
     []
+*/
 
 // Recieve third message
+/*
 rule B2:
     []
   --[ 
     // We need 1 'Commit' term and 2 'Secret' terms
     ]->
     []
+*/
 
 /*
 This lemma constructs an invariant that helps the prover converge.
 Feel free to treat this as a black box.
 */
+/*
 lemma types [sources]:
   " (All ni m1 #i.
         IN_B1(ni, m1) @ i
@@ -115,34 +124,40 @@ lemma types [sources]:
         )
     )
   "
+*/
 
 // Nonce secrecy from the perspective of both the initiator and the responder.
+/*
 lemma nonce_secrecy:
-  " /* It cannot be that */
+  " // It cannot be that
     not(
         Ex A B s #i.
-          /* somebody claims to have setup a shared secret, */
+          // somebody claims to have setup a shared secret,
           // ...
-          /* but the adversary knows it */
+          // but the adversary knows it
         & // ...
-          /* without having performed a long-term key reveal. */
+          // without having performed a long-term key reveal. 
         & not (Ex #r. LtkReveal(A) @ r)
         & not (Ex #r. LtkReveal(B) @ r)
        )"
+*/
 
 // Consistency check: ensure that secrets can be shared between honest agents.
+/*
 lemma session_key_setup_possible:
   exists-trace
-  " /* It is possible that */
+  " // It is possible that
     // ...
-      /* somebody claims to have setup a shared secret, */
+      // somebody claims to have setup a shared secret, 
       // ...
-      /* without the adversary having performed a long-term key reveal. */
+      // without the adversary having performed a long-term key reveal. 
     // ...
     // ...
   "
+*/
 
 // Injective agreement from the perspective of both the initiator and the responder.
+/*
 lemma injective_agree:
   "
     All actor peer params #i.
@@ -156,5 +171,6 @@ lemma injective_agree:
         | (Ex #r. LtkReveal(actor) @ r)
         | (Ex #r. LtkReveal(peer)  @ r)
   "
+*/
 
 end
