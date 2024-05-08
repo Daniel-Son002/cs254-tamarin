@@ -55,31 +55,26 @@ rule A1:
 
 // Recieve first message, send second message
 rule B1:
-    let m1 = aenc {'1', A, nA} pk(ltkB) // Define message that B recieves
-        m2 = aenc {'2', nA, ~nB} pkA // Encode (N_A, N_B) with A's public key
+    // let m1 = ... // Define message that B recieves
+    //     m2 = ... // Encode (N_A, N_B) with A's public key
     in
-    [ !Ltk($B, ltkB) // Look up secret key
-    , In(m1) // Read message
-    , Fr(~nB) // Generate fresh nonce
-    , !Pk(A, pkA) // Look up public key
+    [ // ... // Look up B's secret key
+    , // ... // Read message
+    , // ... // Generate fresh nonce
+    , // ... // Look up A's public key
     ]
   --[ IN_B1(nA, m1) // Ignore these action facts, they are used to optimize the proof search
     , OUT_B1(m2)
     , Running(A, $B, <'init', nA, ~nB>)
     ]->
-    [ B1($B, A, nA, ~nB) // Store sender, reciever and both nonces
-    , Out(m2) // Output message
+    [ // ... // Store sender, reciever and both nonces
+    , // ... // Output message
     ]
 
 // Recieve second message, send third message
 rule A2:
-    let m2 = aenc {'2', nA, nB} pk(ltkA) // Define message that A recieves
-        m3 = aenc {'3', nB} pkB // Encode N_B with B's public key
-    in
-    [ A1(A, B, nA) // Look up sender, reciever and nonce
-    , !Ltk(A, ltkA) // Look up secret key
-    , In(m2) // Read message
-    , !Pk(B, pkB) // Look up public key
+    [ 
+    // Remember to use the 'A1' fact here! 
     ]
   --[ IN_A2(nB, m2)
     , Commit(A, B, <'init', nA, nB>)
@@ -87,20 +82,13 @@ rule A2:
     , Secret(A, B, nA) // Confirmation of N_A for A
     , Secret(A, B, nB) // Confirmation of N_B for A
     ]->
-    [ Out(m3) // Output message
-    ]
+    []
 
 // Recieve third message
 rule B2:
-    let m3 = aenc{'3', nB} pk(ltkB) // Define message that B recieves
-    in
-    [ B1(B, A, nA, nB) // Look up sender, reciever and both nonces
-    , !Ltk(B, ltkB) // Look up secret key
-    , In(m3) // Read message
-    ]
-  --[ Commit(B, A, <'resp', nA, nB>)
-    , Secret(B, A, nA) // Confirmation of N_A for B
-    , Secret(B, A, nB) // Confirmation of N_B for B
+    []
+  --[ 
+    // We need 1 'Commit' term and 2 'Secret' terms
     ]->
     []
 
