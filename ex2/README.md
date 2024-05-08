@@ -1,6 +1,6 @@
-# Example 2
+# Exercise 2
 
-The goal of example 2 is to apply the Tamarin syntax from example 1 on a problem that we briefly discussed in class: Diffie-Hellman Protocol. Open `exADH.spthy` and follow the instructions inside.
+The goal of exercise 2 is to apply the Tamarin syntax from exercise 1 on a problem that we briefly discussed in class: the Diffie-Hellman Protocol.
 
 ```mermaid
 sequenceDiagram
@@ -14,6 +14,7 @@ sequenceDiagram
   Note over Alice: Compute s := (g^skB)^skA
   Alice->>Bob: {m}s
 ```
+Open `exADH.spthy` and follow the instructions inside.
 
 ## Ltk
 
