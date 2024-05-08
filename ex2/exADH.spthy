@@ -4,7 +4,7 @@ begin
 builtins: symmetric-encryption, diffie-hellman
 
 /*
-rule Ltk models a participant generating a fresh public-private key pair.
+The rule Ltk models a participant generating a fresh public-private key pair.
 */
 
 rule Ltk:

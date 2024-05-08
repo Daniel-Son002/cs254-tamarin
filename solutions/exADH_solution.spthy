@@ -4,9 +4,8 @@ begin
 builtins: symmetric-encryption, diffie-hellman
 
 /*
-rule Ltk models a participant generating a fresh public-private key pair
+rule Ltk models a participant generating a fresh public-private key pair.
 */
-
 
 rule Ltk:
   let publicComponent = 'g'^~secretKey in	// Generate a public value
