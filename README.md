@@ -1,6 +1,6 @@
 # Tamarin Problem Set
 
-This repository includes tutorials and exercises to help you learn Tamarin.
+This repository includes tutorials and exercises to help you learn Tamarin. The Tamarin prover is a powerful tool for modeling and analyzing security protocols. In the `*spthy` files, we model the actions taken by agents and specify the desired properties of each set of rules. The benefit of the Tamarin prover is that it allows us to automatically construct proofs of correctness where an arbitrary number of protocol instances are interleaved in parallel. The link to find more information on Tamarin is available on the Tamarin website [here](https://tamarin-prover.com/manual/master/book/003_example.html).
 
 ## Tamarin Installation
 
