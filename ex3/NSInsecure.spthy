@@ -119,13 +119,25 @@ lemma nonce_secrecy:
     not(
         Ex A B s #i.
           /* somebody claims to have setup a shared secret, */
-          Secret(A, B, s) @ i
+          // ...
           /* but the adversary knows it */
-        & (Ex #j. K(s) @ j)
+        & // ...
           /* without having performed a long-term key reveal. */
         & not (Ex #r. LtkReveal(A) @ r)
         & not (Ex #r. LtkReveal(B) @ r)
        )"
+
+// Consistency check: ensure that secrets can be shared between honest agents.
+lemma session_key_setup_possible:
+  exists-trace
+  " /* It is possible that */
+    Ex A B s #i.
+      /* somebody claims to have setup a shared secret, */
+      Secret(A, B, s) @ i
+      /* without the adversary having performed a long-term key reveal. */
+    & not (Ex #r. LtkReveal(A) @ r)
+    & not (Ex #r. LtkReveal(B) @ r)
+  "
 
 // Injective agreement from the perspective of both the initiator and the responder.
 lemma injective_agree:
@@ -143,18 +155,6 @@ lemma injective_agree:
         /* or the adversary perform a long-term key reveal on actor or peer */
         | (Ex #r. LtkReveal(actor) @ r)
         | (Ex #r. LtkReveal(peer)  @ r)
-  "
-
-// Consistency check: ensure that secrets can be shared between honest agents.
-lemma session_key_setup_possible:
-  exists-trace
-  " /* It is possible that */
-    Ex A B s #i.
-      /* somebody claims to have setup a shared secret, */
-      Secret(A, B, s) @ i
-      /* without the adversary having performed a long-term key reveal. */
-    & not (Ex #r. LtkReveal(A) @ r)
-    & not (Ex #r. LtkReveal(B) @ r)
   "
 
 end

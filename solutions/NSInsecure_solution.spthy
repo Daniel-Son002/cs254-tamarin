@@ -105,8 +105,8 @@ rule B2:
     []
 
 /*
-This lemma constructs an invariant that helps the prover converge faster.
-Feel free to treat this as a black box, but if you're feeling brave, try commenting it out and see what goes wrong in the proof of the 'nonce_secracy' lemma
+This lemma constructs an invariant that helps the prover converge.
+Feel free to treat this as a black box.
 */
 lemma types [sources]:
   " (All ni m1 #i.
@@ -139,6 +139,18 @@ lemma nonce_secrecy:
         & not (Ex #r. LtkReveal(B) @ r)
        )"
 
+// Consistency check: ensure that secrets can be shared between honest agents.
+lemma session_key_setup_possible:
+  exists-trace
+  " /* It is possible that */
+    // ...
+      /* somebody claims to have setup a shared secret, */
+      // ...
+      /* without the adversary having performed a long-term key reveal. */
+    // ...
+    // ...
+  "
+
 // Injective agreement from the perspective of both the initiator and the responder.
 lemma injective_agree:
   " /* Whenever somebody commits to running a session, then */
@@ -155,18 +167,6 @@ lemma injective_agree:
         /* or the adversary perform a long-term key reveal on actor or peer */
         | (Ex #r. LtkReveal(actor) @ r)
         | (Ex #r. LtkReveal(peer)  @ r)
-  "
-
-// Consistency check: ensure that secrets can be shared between honest agents.
-lemma session_key_setup_possible:
-  exists-trace
-  " /* It is possible that */
-    Ex A B s #i.
-      /* somebody claims to have setup a shared secret, */
-      Secret(A, B, s) @ i
-      /* without the adversary having performed a long-term key reveal. */
-    & not (Ex #r. LtkReveal(A) @ r)
-    & not (Ex #r. LtkReveal(B) @ r)
   "
 
 end

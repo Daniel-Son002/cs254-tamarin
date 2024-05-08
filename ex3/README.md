@@ -23,9 +23,17 @@ Next, fill in the details of rules `A1`, `B1`, `A2` and `B2`. Each rule has decr
 
 ## Defining the Lemmas
 
+After defining the protocol, you'll notice a lemma called `types`. This is a sources invariant designed to help the prover converge. Feel free to ignore it, but if you're feeling brave you can try figuring out what it does and why it is necessary! See what happens if you try proving the `nonce_secracy` lemma without it; this is not necessary for the exercise.
+
+Next, look at the lemma `nonce_secracy`. This is very similar to the secracy lemmas in exercise 2; fill in the missing lines denoted by `...`. Note that, when implemented correctly, the protocol will fail to satisfy this lemma. This is precisely because of the man-in-the-middle attack discovered by Lowe! Look at the solution to the lemma and see if you can figure out where it goes wrong.
+
+Next, the lemma `session_key_setup_possible` should check that it is possible to set up secrets between honest agents. This just verifies that our protocol is actually useful! The `exists-trace` keyword indicates that this lemma holds if there is any trace where the condition is satisfied, as opposed to other lemmas where we want the condition to hold over all traces. Complete the lemma. If done correctly the protocol should satisfy this lemma, since it is possible for agents to set up secrets even over the insecure protocol.
+
+Finally, look at lemma `injective_agree` which has already been implemented for you. This lemma is a bit more complex, and captures the idea of injective agreement - every `Running` term should be paired with a unique `Commit` term. Add comments explaining what the components of the lemma do.
+
 ## Making Needham-Schroeder Secure
 
-Finally, let us verify that the fix proposed by Lowe makes the protocol secure against man-in-the-middle attacks! Open `NSSecure.spthy`, and start by copying the code from `NSInecure.spthy`. Next, make the necessary changes to the rules. 
+Let us verify that the fix proposed by Lowe makes the protocol secure against man-in-the-middle attacks! Open `NSSecure.spthy`, and start by copying the code from `NSInecure.spthy`. Next, make the necessary changes to the rules. 
 
 ```mermaid
 sequenceDiagram
