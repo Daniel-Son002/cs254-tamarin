@@ -3,47 +3,63 @@ begin
 
 builtins: symmetric-encryption, diffie-hellman
 
-/*
-rule Ltk models a participant generating a fresh public-private key pair
-*/
+
+// The Ltk rule models a participant generating a fresh public-private key pair
 
 rule Ltk:
-  // let publicComponent = 'g'^secretKey in 	// Generate a public value
-  [ Fr(~secretKey) ]
-  -->
-  [ // !Ltk(), !Pk($P, publicComponent), Out() ] 	// Output the long term key, public key and public component
+    // let publicKey = _^_ in // Calculate the public key
+    [ // Fr(...) ] // Generate the private key
+    -->
+    [ // !Ltk($P, ...) // Store the private key  
+    // , !Pk($P, ...) // Store the public key
+    // , Out(...) // Output the public key
+    ]
+
+
+rule A_Init:
+    [ // !Pk(...) ]	// Look up A's public key
+    -->
+    [ // Out(<'req', ...>) // Output A's initial message
+    , St_A($A, $B) // Store A and B for reference
+    ]
+
+rule B_Init:
+    // let sharedKey = ... in // Calculate the shared key using A's public key
+    [ // !Ltk(...) // Look up B's secret key
+    // , !Pk(...) // Look up A's public key
+    // , !Pk(...) // Look up B's public key
+    // , In(<'req', ...>) // Take A's initial message as input
+    ]
+    --[ ResponderKey(sharedKey) ]->
+    [ // Out(<senc('ack', ...)>) // Output B's acknowledgement message
+    ]
+
+rule A_SendMsg:
+    // let sharedKey = ... in	// Calculate the shared key
+    [ // ... // Look up A's secret key
+    // , ... // Look up B's public key
+    // , ... // Generate a fresh message
+    // , ... // Take B's acknowledgement message as input
+    // , St_A(...) // Look up A and B 
+    ]
+  --[ MessageWasSent(~msg)
+    , InitiatorKey(sharedKey)
+    , Eq('ack', sdec(encryptedAck, sharedKey)) 
+    ]->
+    [ // ... ]	// Output a symmetrically-encrypted message using the shared key
 
 
 /*
-A will use its public value to send a request to B with its public key
+This restriction allows you to use the Eq action fact in rules to constrain that two terms must be 
+equal. This is used to "compare" two messages or terms, e.g., to check that signature verification 
+is equal to true.
 */
 
-rule A_Init:
-  [ // !Pk() ]	// A should initialize its public key
-  -->
-  [ // Out(<'req'>), St_A() ]	// A sends a request to B with its public value/key and stores A and B's public value
-
-rule B_Init:
-  // let sharedKey = _^_ in 	// B calculates the shared key using A's public key
-  [ // !Ltk(), !Pk(), !Pk(), In(<'req'>) ]	// B initializes its long term key and A's public value and key
-  --[ ResponderKey(sharedKey) ]->
-  [ // Out(<senc('ack')>) ]	// B outputs its symmetrically encrypted acknowledgement to A with its public value/key
-
-rule A_SendMsg:
-  // let sharedKey = _^_ in	// A calculates the shared key using B's public key
-  [ // !Ltk(), !Pk(), Fr(), In(<encryptedAck>), St_A() ] 	// A takes in the encrypted acknowledgment and generates a fresh message
-  --[ MessageWasSent(~msg),
-      InitiatorKey(sharedKey),
-      Eq('ack', sdec(encryptedAck, sharedKey)) ]->
-  [ // Out(senc()) ]	// A outputs the symmetrically encrypted message with the shared key between A and B
-
-// This restriction allows you to use the Eq action fact in rules to constrain
-// that two terms must be equal. This is used to "compare" two messages or
-// terms, e.g., to check that signature verification is equal to true.
-// This rule is only commented out right now to suppress a warning that Eq is
-// referenced but not used. Un-comment it whenever you want!
 // restriction Eq:
 //   "All t1 t2 #x. Eq(t1, t2) @ #x ==> t1 = t2"
+
+
+// Finally, the lemmas define the security parameters we want to test
 
 lemma Executability:
   exists-trace
