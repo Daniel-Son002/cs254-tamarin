@@ -59,8 +59,6 @@ lemma Executability:
   exists-trace
   "Ex #t1 #t2 #t3. ReachAInit() @ #t1 & ReachBInit() @ #t2 & ReachASendMsg() @ #t3"
 
-// K(m) @ #t means that the adversary knows message m at timepoint #t.
-// Again, the following lemmas are commented out to suppress warnings.
 // lemma ResponderKeySecrecy:
 //   "All k #t. ResponderKey(k) @ #t ==> not Ex #x. K(k) @ #x"
 
