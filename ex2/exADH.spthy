@@ -4,14 +4,14 @@ begin
 builtins: symmetric-encryption, diffie-hellman
 
 /*
-rule Ltk models a participant generating a fresh public-private key pair
+rule Ltk models a participant generating a fresh public-private key pair.
 */
 
 rule Ltk:
-  // let publicComponent = 'g'^_ in 	// Generate a public value
-  []
+  // let publicKey = 'g'^_ in 	// Calculate the public key based on the secret key
+  []  // Generate a secret key
   -->
-  [] 	// Output the long term key, public key and public component
+  [] 	// Store the secret key and public key, and output the public key
 
 
 /*
@@ -19,9 +19,9 @@ A will use its public value to send a request to B with its public key
 */
 
 rule A_Init:
-  []	// A should initialize its public key
+  []	// A should look up its public key
   -->
-  []	// A sends a request to B with its public value/key and stores A and B's public value
+  []	// A outputs a request to B with its public key and stores A and B's public value
 
 rule B_Init:
   // let sharedKey = _^_ in 	// B calculates the shared key using A's public key

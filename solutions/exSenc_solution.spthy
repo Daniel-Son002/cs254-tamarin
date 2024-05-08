@@ -1,22 +1,22 @@
 /*
-The goal of this exercise is to familiarize you with adversaries in Tamarin. 
-It is recommended that you regularly reload the model to check syntax.
+The goal of this exercise is to familiarize you with adversaries in Tamarin. It is recommended that 
+you regularly reload the model to check syntax.
 */
 
 theory ExerciseSymmetricEncryption
 begin
 
 /*
-The symmetric encryption message theory defines the functions senc/2 and sdec/2 
-satisfying the equation sdec(senc(m, k), k) = m.
+The symmetric encryption message theory defines the functions senc/2 and sdec/2 satisfying the 
+equation sdec(senc(m, k), k) = m.
 */
 builtins: symmetric-encryption
 
 
 /*
-The KeyGen rule lets a participant A generate a fresh secret key and store it 
-using the fact !LongTermKey. Note that facts that do not start with '!' can only
-be used once. Fill in the premise and conclusion.
+The KeyGen rule lets a participant A generate a fresh secret key and store it using the fact 
+!LongTermKey. Note that facts that do not start with '!' can onlybe used once. Fill in the premise 
+and conclusion.
 */
 
 rule KeyGen:
@@ -26,9 +26,8 @@ rule KeyGen:
 
 
 /*
-In the rule SendMsg, we want to participant $A to send a message ~m 
-symmetrically encrypted under the key generated using KeyGen. Fill in the 
-premise and conclusion.
+In the rule SendMsg, we want to participant $A to send a message ~m symmetrically encrypted under 
+the key generated using KeyGen. Fill in the premise and conclusion.
 */
 
 rule SendMsg:
@@ -47,7 +46,6 @@ lemma Secrecy:
 end
 
 /*
-At this point, try verifying the Tamarin rules! 
-To launch Tamarin, execute this command:
+At this point, try verifying the Tamarin rules! To launch Tamarin, execute this command:
 tamarin-prover interactive ex1/
 */
