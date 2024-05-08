@@ -29,18 +29,18 @@ You can find a more detailed overview in the cheatsheet.
 
 ### Premise
 
-In the premise, we want to generate a unguessable/fresh value `k`. How might we do this? Hint: Check the cheatsheet for any relevant predefined rules that may be useful!
+In the premise, we want to generate an unguessable/fresh value `k`. How might we do this? Hint: Check the cheatsheet for any relevant predefined rules that may be useful!
 <details>
   <summary>Expected premise</summary>
-  `[ Fr(~k) ]`
+  [ Fr(~k) ]
 </details>
 
 
 ### Conclusion
-In the conclustion, we want to save the unguessable/fresh value `k` that we generated in the premise and denote that it is participant `A`'s key. Again, check the cheatsheet for any relevant predefined rules that may be useful!
+In the conclusion, we want to save the unguessable/fresh value `k` that we generated in the premise and denote that it is participant `A`'s key. Again, check the cheatsheet for any relevant predefined rules that may be useful!
 <details>
   <summary>Expected conclusion</summary>
-  `[ !LongTermKey($A, ~k) ]`
+  [ !LongTermKey($A, ~k) ]
 </details>
 
 ## SendMsg
@@ -51,17 +51,17 @@ In the conclustion, we want to save the unguessable/fresh value `k` that we gene
 In the premise, we want to use the previously generated key from `KeyGen`.
 <details>
   <summary>Expected premise</summary>
-  `[ !LongTermKey($A, ~k) ]`
+  [ !LongTermKey($A, ~k) ]
 </details>
 
 ### Action Fact
 This part is already given in the stub code. The action fact shows that participant `A` sends the message `~msg`.
 
-### Conclustion
+### Conclusion
 In the conclusion, we want to output the key `~k`. 
 <details>
   <summary>Expected conclustion</summary>
-  `[ Out(~k) ]`
+  [ Out(~k) ]
 </details>
 
 
