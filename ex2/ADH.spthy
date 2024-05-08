@@ -5,7 +5,6 @@ builtins: symmetric-encryption, diffie-hellman
 
 
 // The Ltk rule models a participant generating a fresh public-private key pair
-
 rule Ltk:
     // let publicKey = _^_ in // Calculate the public key
     [ // Fr(...) ] // Generate the private key
@@ -15,14 +14,15 @@ rule Ltk:
     // , Out(...) // Output the public key
     ]
 
-
+// This rule models A's initial message
 rule A_Init:
     [ // !Pk(...) ]	// Look up A's public key
-    -->
+  --[ ReachAInit() ]->
     [ // Out(<'req', ...>) // Output A's initial message
     , St_A($A, $B) // Store A and B for reference
     ]
 
+// This rule models B's response
 rule B_Init:
     // let sharedKey = ... in // Calculate the shared key using A's public key
     [ // !Ltk(...) // Look up B's secret key
@@ -30,10 +30,12 @@ rule B_Init:
     // , !Pk(...) // Look up B's public key
     // , In(<'req', ...>) // Take A's initial message as input
     ]
-    --[ ResponderKey(sharedKey) ]->
-    [ // Out(<senc('ack', ...)>) // Output B's acknowledgement message
-    ]
+  --[ ReachBInit()
+    , ResponderKey(sharedKey) 
+    ]->
+    [ // Out(<senc('ack', ...)>) ] // Output B's acknowledgement message
 
+// This rule models A sending a message using the shared key
 rule A_SendMsg:
     // let sharedKey = ... in	// Calculate the shared key
     [ // ... // Look up A's secret key
@@ -42,7 +44,8 @@ rule A_SendMsg:
     // , ... // Take B's acknowledgement message as input
     // , St_A(...) // Look up A and B 
     ]
-  --[ MessageWasSent(~msg)
+  --[ ReachASendMsg()
+    , MessageWasSent(~msg)
     , InitiatorKey(sharedKey)
     , Eq('ack', sdec(encryptedAck, sharedKey)) 
     ]->

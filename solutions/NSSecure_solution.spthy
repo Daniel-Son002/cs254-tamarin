@@ -8,7 +8,7 @@ Here, pk(A) and pk(B) are public keys with corresponding secret keys, (., .) rep
 concatenation, and N_A and N_B are random nonces.
 */
 
-theory NSInsecure
+theory NSSecure
 begin
 
 /*

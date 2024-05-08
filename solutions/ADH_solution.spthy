@@ -4,8 +4,7 @@ begin
 builtins: symmetric-encryption, diffie-hellman
 
 
-// The Ltk rule models a participant generating a fresh public-private key pair
-
+// This rule models a participant generating a fresh public-private key pair
 rule Ltk:
     let publicKey = 'g'^secretKey in // Calculate the public key
     [ Fr(secretKey) ] // Generate the private key
@@ -15,7 +14,7 @@ rule Ltk:
     , Out(publicKey) // Output the public key
     ]
 
-
+// This rule models A's initial message
 rule A_Init:
     [ !Pk($A, publicKeyA) ] // Look up A's public key
   --[ ReachAInit() ]->
@@ -23,6 +22,7 @@ rule A_Init:
     , St_A($A, $B) // Store A and B for reference
     ]
 
+// This rule models B's response
 rule B_Init:
     let sharedKey = publicKeyA^~secretKeyB in // Calculate the shared key using A's public key
     [ !Ltk($B, ~secretKeyB) // Look up B's secret key
@@ -35,6 +35,7 @@ rule B_Init:
     ]->
     [ Out(<senc('ack', sharedKey), $A, $B, publicKeyB>) ] // Output B's acknowledgement message
 
+// This rule models A sending a message using the shared key
 rule A_SendMsg:
     let sharedKey = publicKeyB^~secretKeyA in // Calculate the shared key
     [ !Ltk($A, ~secretKeyA) // Look up A's secret key
