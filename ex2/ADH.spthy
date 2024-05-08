@@ -5,6 +5,7 @@ builtins: symmetric-encryption, diffie-hellman
 
 
 // The Ltk rule models a participant generating a fresh public-private key pair
+/*
 rule Ltk:
     // let publicKey = _^_ in // Calculate the public key
     [ // Fr(...) ] // Generate the private key
@@ -13,16 +14,20 @@ rule Ltk:
     // , !Pk($P, ...) // Store the public key
     // , Out(...) // Output the public key
     ]
+*/
 
 // This rule models A's initial message
+/*
 rule A_Init:
     [ // !Pk(...) ]	// Look up A's public key
   --[ ReachAInit() ]->
     [ // Out(<'req', ...>) // Output A's initial message
     , St_A($A, $B) // Store A and B for reference
     ]
+*/
 
 // This rule models B's response
+/*
 rule B_Init:
     // let sharedKey = ... in // Calculate the shared key using A's public key
     [ // !Ltk(...) // Look up B's secret key
@@ -34,8 +39,10 @@ rule B_Init:
     , ResponderKey(sharedKey) 
     ]->
     [ // Out(<senc('ack', ...)>) ] // Output B's acknowledgement message
+*/
 
 // This rule models A sending a message using the shared key
+/*
 rule A_SendMsg:
     // let sharedKey = ... in	// Calculate the shared key
     [ // ... // Look up A's secret key
@@ -50,6 +57,7 @@ rule A_SendMsg:
     , Eq('ack', sdec(encryptedAck, sharedKey)) 
     ]->
     [ // ... ]	// Output a symmetrically-encrypted message using the shared key
+*/
 
 
 /*
@@ -64,9 +72,9 @@ is equal to true.
 
 // Finally, the lemmas define the security parameters we want to test
 
-lemma Executability:
-  exists-trace
-  "Ex #t1 #t2 #t3. ReachAInit() @ #t1 & ReachBInit() @ #t2 & ReachASendMsg() @ #t3"
+// lemma Executability:
+//   exists-trace
+//   "Ex #t1 #t2 #t3. ReachAInit() @ #t1 & ReachBInit() @ #t2 & ReachASendMsg() @ #t3"
 
 // lemma ResponderKeySecrecy:
 //   "All k #t. ResponderKey(k) @ #t ==> not Ex #x. K(k) @ #x"

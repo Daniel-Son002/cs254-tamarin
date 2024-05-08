@@ -19,30 +19,32 @@ The KeyGen rule lets a participant A generate a fresh secret key and store it us
 and conclusion.
 */
 
+/*
 rule KeyGen:
   []
   -->
   []
-
+*/
 
 /*
 In the rule SendMsg, we want to participant $A to send a message ~m symmetrically encrypted under 
 the key generated using KeyGen. Fill in the premise and conclusion.
 */
 
+/*
 rule SendMsg:
   []
   --[ // MessageWasSentBy($A, ~msg)
     ]->
   []
-
+*/
 
 /*
 The secrecy lemma ensures that an advarsary can not learn the message sent.
 */
 
-lemma Secrecy:
-  "All p m #t. MessageWasSentBy(p, m) @ #t ==> not Ex #x. K(m) @ #x"
+// lemma Secrecy:
+//   "All p m #t. MessageWasSentBy(p, m) @ #t ==> not Ex #x. K(m) @ #x"
 
 end
 
