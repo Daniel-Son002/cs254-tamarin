@@ -153,18 +153,15 @@ lemma session_key_setup_possible:
 
 // Injective agreement from the perspective of both the initiator and the responder.
 lemma injective_agree:
-  " /* Whenever somebody commits to running a session, then */
+  "
     All actor peer params #i.
         Commit(actor, peer, params) @ i
       ==>
-        /* there is somebody running a session with the same parameters */
           (Ex #j. Running(actor, peer, params) @ j & j < i
-            /* and there is no other commit on the same parameters */
             & not(Ex actor2 peer2 #i2.
                     Commit(actor2, peer2, params) @ i2 & not(#i = #i2)
                  )
           )
-        /* or the adversary perform a long-term key reveal on actor or peer */
         | (Ex #r. LtkReveal(actor) @ r)
         | (Ex #r. LtkReveal(peer)  @ r)
   "

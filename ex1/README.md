@@ -7,7 +7,7 @@ To launch Tamarin and verify the lemmas, run `tamarin-prover interactive ex1/`
 
 ## Tamarin Syntax
 
-The following may be useful information to understand when reading Tamarin code.
+The following may be useful information to understand when reading and writing Tamarin code.
 
 ```tamarin
 rule RuleName:
@@ -74,6 +74,6 @@ lemma Secrecy:
   "All p m #t. MessageWasSentBy(p, m) @ #t ==> not Ex #x. K(m) @ #x"
 ```
 
-The above is the Secrecy lemma that is defined for you in this exercise. `lemma Secrecy` check that for all participants `p`, messages `m`, and times `#t`, participant `p` sends a message `m` at time `#t` defined by `All p m #t. MessageWasSentBy(p, m) @ #t`. The `==>` is a logical operand (implies) that is equivalent to `p | not q` where the left hand side of the `==>` is `p` and the right hand side is `q`. Thus the right hand side is showing that for some time points `#x`, `K(m)` does not hold. More specifically, the right hand side is saying that there does not exist a time `#x` where an adversary knows the message `m` at time `#x`.
+The above is the Secrecy lemma that is defined for you in this exercise. `lemma Secrecy` checks that for all participants `p`, messages `m`, and times `#t`, if participant `p` sends a message `m` at time `#t`, then there does not exist a time `#x` such that an adversary knows the message `m` at time `#x`. The `==>` is a logical operand (implies) that is equivalent to `q | not p` where the left hand side of the `==>` is `p` and the right hand side is `q`. 
 
 
