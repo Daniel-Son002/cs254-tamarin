@@ -42,4 +42,16 @@ The conclustion for this rule should output the symmetrically encrypted message 
 
 ## Lemma Writing
 
+Let's try to understand the lemmas in `exADH.spthy`! The first lemma is `Executability`:
+
+```tamarin
+lemma Executability:
+  exists-trace
+  "Ex #t1 #t2 #t3. ReachAInit() @ #t1 & ReachBInit() @ #t2 & ReachASendMsg() @ #t3"
+```
+
+The executability lemma states that for some time points `#t1`, `#t2`, and `#t3`, `ReachAInit()` occurs at time `#t1` and `ReachBInit()` occurs at time `#t2` and `ReachASendMsg()` occurs at time `#t3`.
+
+As an exercise, take a look at the three remaining lemmas and try to understand them. Write your interpretation of the lemmas in the problem set.
+
 
