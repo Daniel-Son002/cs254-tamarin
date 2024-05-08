@@ -1,17 +1,19 @@
 /*
-The goal of this exercise is to formalize the secure version of the Needham-Schroeder protocol and prove that it is secure.
+The goal of this exercise is to formalize the insecure version of the Needham-Schroeder protocol and
+prove that it is insecure.
     1. A -> B: {(A, N_A)}pk(B)
-    2. B -> A: {(B, N_A, N_B)}pk(A)
+    2. B -> A: {(N_A, N_B)}pk(A)
     3. A -> B: {N_B}pk(B)
-Here, pk(A) and pk(B) are public keys with corresponding secret keys, (., .) represents concatenation, and N_A and N_B are random nonces.
-Note the difference from the insecure version is in step 2, where B also sends their identity.
+Here, pk(A) and pk(B) are public keys with corresponding secret keys, (., .) represents 
+concatenation, and N_A and N_B are random nonces.
 */
 
-theory NSSecure
+theory NSInsecure
 begin
 
 /*
-This builtin gives us access to 3 function symbols -- aenc, adec, and pk -- satisfying the following equality:
+This builtin gives us access to 3 function symbols -- aenc, adec, and pk -- satisfying the following
+equality:
     adec(aenc(m, pk(sk)), sk) = m
 Note the distinction between the public key and the secret key, unlike symmetric encryption.
 */
@@ -20,22 +22,22 @@ builtins: asymmetric-encryption
 
 // The following rules define the public key infrastructure
 
-// This allows any user to register a public key
+// Rule to register a new key
 rule RegLtk:
-    [ Fr(~ltkA) ] // Generate fresh key
+    [ Fr(~ltkA) ]
     -->
-    [ !Ltk($A, ~ltkA), !Pk($A, pk(~ltkA)), Out(pk(~ltkA)) ] // Save secret and public key, announce public key
+    [ !Ltk($A, ~ltkA), !Pk($A, pk(~ltkA)), Out(pk(~ltkA)) ]
 
-// This allows any user to retrieve a public key
+// This allows an adversary to retrieve a public key
 rule GetPk:
     [ !Pk($A, pkA) ]
     -->
     [ Out(pkA) ]
 
-// This allows us to model a secret key being revealed, but ensured that this is logged by an action
+// This allows us to model a secret key being revealed, but ensures that this is logged by an action
 rule RevLtk:
-    [ !Ltk(A, ltkA) ] // Look up secret key
-    --[ LtkReveal(A) ]->
+    [ !Ltk($A, ltkA) ] // Look up secret key
+    --[ LtkReveal($A) ]->
     [ Out(ltkA) ] // Announce secret key
 
 
@@ -59,10 +61,10 @@ rule B1:
     let m1 = aenc {'1', A, nA} pk(ltkB) // Define message that B recieves
         m2 = aenc {'2', $B, nA, ~nB} pkA // Encode (N_A, N_B) with A's public key
     in
-    [ !Ltk($B, ltkB) // Look up secret key
-    , In(m1) // Read message
+    [ !Ltk($B, ltkB) // Look up B's secret key
+    , In(m1) // Read message from A
     , Fr(~nB) // Generate fresh nonce
-    , !Pk(A, pkA) // Look up public key
+    , !Pk(A, pkA) // Look up A's public key
     ]
   --[ IN_B1(nA, m1) // Ignore these action facts, they are used to optimize the proof search
     , OUT_B1(m2)
@@ -85,8 +87,8 @@ rule A2:
   --[ IN_A2(nB, m2)
     , Commit(A, B, <'init', nA, nB>)
     , Running(B, A, <'resp', nA, nB>)
-    , Secret(A, B, nA) // Confirmation of N_A for A
-    , Secret(A, B, nB) // Confirmation of N_B for A
+    , Secret(A, B, nA)
+    , Secret(A, B, nB)
     ]->
     [ Out(m3) // Output message
     ]
@@ -100,14 +102,14 @@ rule B2:
     , In(m3) // Read message
     ]
   --[ Commit(B, A, <'resp', nA, nB>)
-    , Secret(B, A, nA) // Confirmation of N_A for B
-    , Secret(B, A, nB) // Confirmation of N_B for B
+    , Secret(B, A, nA)
+    , Secret(B, A, nB)
     ]->
     []
 
 /*
-This lemma constructs an invariant that helps the prover converge faster.
-Feel free to treat this as a black box, but if you're feeling brave, try commenting it out and see what goes wrong in the proof of the 'nonce_secracy' lemma
+This lemma constructs an invariant that helps the prover converge.
+Feel free to treat this as a black box.
 */
 lemma types [sources]:
   " (All ni m1 #i.
@@ -140,6 +142,18 @@ lemma nonce_secrecy:
         & not (Ex #r. LtkReveal(B) @ r)
        )"
 
+// Consistency check: ensure that secrets can be shared between honest agents.
+lemma session_key_setup_possible:
+  exists-trace
+  " /* It is possible that */
+    Ex A B s #i.
+      /* somebody claims to have setup a shared secret, */
+      Secret(A, B, s) @ i
+      /* without the adversary having performed a long-term key reveal. */
+    & not (Ex #r. LtkReveal(A) @ r)
+    & not (Ex #r. LtkReveal(B) @ r)
+  "
+
 // Injective agreement from the perspective of both the initiator and the responder.
 lemma injective_agree:
   " /* Whenever somebody commits to running a session, then */
@@ -156,18 +170,6 @@ lemma injective_agree:
         /* or the adversary perform a long-term key reveal on actor or peer */
         | (Ex #r. LtkReveal(actor) @ r)
         | (Ex #r. LtkReveal(peer)  @ r)
-  "
-
-// Consistency check: ensure that secrets can be shared between honest agents.
-lemma session_key_setup_possible:
-  exists-trace
-  " /* It is possible that */
-    Ex A B s #i.
-      /* somebody claims to have setup a shared secret, */
-      Secret(A, B, s) @ i
-      /* without the adversary having performed a long-term key reveal. */
-    & not (Ex #r. LtkReveal(A) @ r)
-    & not (Ex #r. LtkReveal(B) @ r)
   "
 
 end

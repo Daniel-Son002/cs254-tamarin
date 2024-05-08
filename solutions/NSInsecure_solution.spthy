@@ -1,16 +1,19 @@
 /*
-The goal of this exercise is to formalize the insecure version of the Needham-Schroeder protocol and prove that it is insecure.
+The goal of this exercise is to formalize the insecure version of the Needham-Schroeder protocol and
+prove that it is insecure.
     1. A -> B: {(A, N_A)}pk(B)
     2. B -> A: {(N_A, N_B)}pk(A)
     3. A -> B: {N_B}pk(B)
-Here, pk(A) and pk(B) are public keys with corresponding secret keys, (., .) represents concatenation, and N_A and N_B are random nonces.
+Here, pk(A) and pk(B) are public keys with corresponding secret keys, (., .) represents 
+concatenation, and N_A and N_B are random nonces.
 */
 
 theory NSInsecure
 begin
 
 /*
-This builtin gives us access to 3 function symbols -- aenc, adec, and pk -- satisfying the following equality:
+This builtin gives us access to 3 function symbols -- aenc, adec, and pk -- satisfying the following
+equality:
     adec(aenc(m, pk(sk)), sk) = m
 Note the distinction between the public key and the secret key, unlike symmetric encryption.
 */
@@ -19,11 +22,11 @@ builtins: asymmetric-encryption
 
 // The following rules define the public key infrastructure
 
-// Rule to register new key
+// Rule to register a new key
 rule RegLtk:
-    [ Fr(~ltkA) ] // Generate fresh key
+    [ Fr(~ltkA) ]
     -->
-    [ !Ltk($A, ~ltkA), !Pk($A, pk(~ltkA)), Out(pk(~ltkA)) ] // Save secret and public key, announce public key
+    [ !Ltk($A, ~ltkA), !Pk($A, pk(~ltkA)), Out(pk(~ltkA)) ]
 
 // This allows an adversary to retrieve a public key
 rule GetPk:
@@ -31,7 +34,7 @@ rule GetPk:
     -->
     [ Out(pkA) ]
 
-// This allows us to model a secret key being revealed, but ensured that this is logged by an action
+// This allows us to model a secret key being revealed, but ensures that this is logged by an action
 rule RevLtk:
     [ !Ltk($A, ltkA) ] // Look up secret key
     --[ LtkReveal($A) ]->
@@ -58,10 +61,10 @@ rule B1:
     let m1 = aenc {'1', A, nA} pk(ltkB) // Define message that B recieves
         m2 = aenc {'2', nA, ~nB} pkA // Encode (N_A, N_B) with A's public key
     in
-    [ !Ltk($B, ltkB) // Look up secret key
-    , In(m1) // Read message
+    [ !Ltk($B, ltkB) // Look up B's secret key
+    , In(m1) // Read message from A
     , Fr(~nB) // Generate fresh nonce
-    , !Pk(A, pkA) // Look up public key
+    , !Pk(A, pkA) // Look up A's public key
     ]
   --[ IN_B1(nA, m1) // Ignore these action facts, they are used to optimize the proof search
     , OUT_B1(m2)
@@ -84,8 +87,8 @@ rule A2:
   --[ IN_A2(nB, m2)
     , Commit(A, B, <'init', nA, nB>)
     , Running(B, A, <'resp', nA, nB>)
-    , Secret(A, B, nA) // Confirmation of N_A for A
-    , Secret(A, B, nB) // Confirmation of N_B for A
+    , Secret(A, B, nA)
+    , Secret(A, B, nB)
     ]->
     [ Out(m3) // Output message
     ]
@@ -99,8 +102,8 @@ rule B2:
     , In(m3) // Read message
     ]
   --[ Commit(B, A, <'resp', nA, nB>)
-    , Secret(B, A, nA) // Confirmation of N_A for B
-    , Secret(B, A, nB) // Confirmation of N_B for B
+    , Secret(B, A, nA)
+    , Secret(B, A, nB)
     ]->
     []
 
@@ -143,25 +146,28 @@ lemma nonce_secrecy:
 lemma session_key_setup_possible:
   exists-trace
   " /* It is possible that */
-    // ...
+    Ex A B s #i.
       /* somebody claims to have setup a shared secret, */
-      // ...
+      Secret(A, B, s) @ i
       /* without the adversary having performed a long-term key reveal. */
-    // ...
-    // ...
+    & not (Ex #r. LtkReveal(A) @ r)
+    & not (Ex #r. LtkReveal(B) @ r)
   "
 
 // Injective agreement from the perspective of both the initiator and the responder.
 lemma injective_agree:
-  "
+  " /* Whenever somebody commits to running a session, then */
     All actor peer params #i.
         Commit(actor, peer, params) @ i
       ==>
+        /* there is somebody running a session with the same parameters */
           (Ex #j. Running(actor, peer, params) @ j & j < i
+            /* and there is no other commit on the same parameters */
             & not(Ex actor2 peer2 #i2.
                     Commit(actor2, peer2, params) @ i2 & not(#i = #i2)
                  )
           )
+        /* or the adversary perform a long-term key reveal on actor or peer */
         | (Ex #r. LtkReveal(actor) @ r)
         | (Ex #r. LtkReveal(peer)  @ r)
   "

@@ -1,15 +1,18 @@
 /*
-The goal of this exercise is to formalize the secure version of the Needham-Schroeder protocol and prove that it is secure.
+The goal of this exercise is to formalize the secure version of the Needham-Schroeder protocol and 
+prove that it is secure.
     1. A -> B: {(A, N_A)}pk(B)
     2. B -> A: {(B, N_A, N_B)}pk(A)
     3. A -> B: {N_B}pk(B)
-Here, pk(A) and pk(B) are public keys with corresponding secret keys, (., .) represents concatenation, and N_A and N_B are random nonces.
+Here, pk(A) and pk(B) are public keys with corresponding secret keys, (., .) represents 
+concatenation, and N_A and N_B are random nonces.
 Note the difference from the insecure version is in step 2, where B also sends their identity.
 */
 
 theory NSSecure
 begin
 
-// Copy over the code from NSInsecure.spthy and make the necessary changes to the rules. All the lemmas should now pass!
+// Copy over the code from NSInsecure.spthy and make the necessary changes to the rules. 
+// All the lemmas should now pass!
 
 end
