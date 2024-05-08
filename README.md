@@ -17,6 +17,22 @@ tamarin-prover interactive {folder_name}/
 
 If there are no errors, navigate to http://127.0.0.1:3001 to see the GUI. Note that Tamarin does not auto update the files, you must save and restart after changing a `*.spthy` file.
 
+## Using the Tamarin solver GUI
+
+Once you have launched your desired Tamarin folder, you will navigate to http://127.0.0.1:3001 to see the GUI. Once there, navigate to the theory name of the exercise to start verifying your lemmas!
+
+In the GUI you will see your lemmas followed by `by sorry` in the following format:
+
+```tamarin
+lemma Secrecy:
+  all-traces
+  "∀ p m #t.
+         (MessageWasSentBy( p, m ) @ #t) ⇒ (¬(∃ #x. K( m ) @ #x))"
+by sorry
+```
+
+`sorry` is clickable and will be how you autoprove lemmas using the Tamarin solver! Try completing exercise 1 and verify its lemma.
+
 # Tamarin Introduction
 
 Tamarin models use three main ingredients:
@@ -44,19 +60,3 @@ Facts are of the form `F(t_1, ..., t_n)` for a fact `F` and n terms. Some built 
 These facts are <ins>linear</ins> which means they can be produced by rules and also consumed by rules. Linear facts may appear in one state but not the next. Alternatively, <ins>persistent</ins> facts are never removed from the state and are denoted by prefixing the fact with a bang `!`.
 
 More information on Tamarin syntax can be found in the cheat sheet.
-
-## Using the Tamarin solver GUI
-
-Once you have launched your desired Tamarin folder, you will navigate to http://127.0.0.1:3001 to see the GUI. Once there, navigate to the theory name of the exercise to start verifying your lemmas!
-
-In the GUI you will see your lemmas followed by `by sorry` in the following format:
-
-```tamarin
-lemma Secrecy:
-  all-traces
-  "∀ p m #t.
-         (MessageWasSentBy( p, m ) @ #t) ⇒ (¬(∃ #x. K( m ) @ #x))"
-by sorry
-```
-
-`sorry` is clickable and will be how you autoprove lemmas using the Tamarin solver! Try completing exercise 1 and verify its lemma.
