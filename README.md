@@ -46,4 +46,4 @@ In exercise 2, you will implement the Diffie-Hellman protocol that we discussed 
 - `A_SendMsg` where a participant `A` uses participant `B`'s acknowledgement to send a message
 
 ## Exercise 3
-In exercise 3, you will implement the Needham-Schroeder protocol that we discussed in class. This exercise has two parts. In the first part, you will implement the version that is *not* secure in the man-in-the-middle attack, and verify that it is insecure. The next part will be to make the Needham-Schroeder protocol secure using the fix proposed by Lowe. This problem is more open-ended than the previous two exercises and involves implementing rules and lemmas.
+In exercise 3, you will implement the Needham-Schroeder protocol that we discussed in class. This exercise has two parts. In the first part, you will implement the version that is *not* secure in the man-in-the-middle attack, and verify that it is insecure. The next part will be to make the Needham-Schroeder protocol secure using the fix proposed by Lowe. This problem is more open-ended than the previous two exercises and involves implementing both rules and lemmas.
